@@ -1,8 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import authReducer from '../features/auth/authSlice';  // Auth slice
+import teamReducer from '../features/team/teamSlice';  // Team slice
+import taskReducer from '../features/task/taskSlice';  // Task slice
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
-    counter: counterReducer,
-  },
+    auth: authReducer,  // Auth state slice
+    team: teamReducer,  // Team state slice
+    task: taskReducer,  // Task state slice
+  }
 });
+
+export default store;

@@ -1,9 +1,12 @@
-import React from 'react'
+import React from 'react';
+import Register from './pages/Register';
 
 const App = () => {
   return (
-    <div>App</div>
-  )
-}
+    <>
+      <Register/>
+    </>
+  );
+};
 
-export default App
+export default App;

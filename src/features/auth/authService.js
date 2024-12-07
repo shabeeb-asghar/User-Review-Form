@@ -5,7 +5,7 @@ const base_url = process.env.REACT_APP_BASE_URL;
 
 // Register a new user
 const registerUser = async (userData) => {
-  const response = await axios.post(`${base_url}/register`, userData);
+  const response = await axios.post(`${base_url}/auth/register`, userData);
   if (response.data) {
     localStorage.setItem('myUser', JSON.stringify(response.data));  // Store user in localStorage
   }
@@ -14,7 +14,7 @@ const registerUser = async (userData) => {
 
 // Log in a user
 const logUser = async (userData) => {
-  const response = await axios.post(`${base_url}/login`, userData);
+  const response = await axios.post(`${base_url}/auth/login`, userData);
   if (response.data) {
     localStorage.setItem('myUser', JSON.stringify(response.data));  // Store logged-in user in localStorage
   }
@@ -23,7 +23,7 @@ const logUser = async (userData) => {
 
 // Get a list of all users (admin access)
 const getUsers = async () => {
-  const response = await axios.get(`${base_url}/get-users`);
+  const response = await axios.get(`${base_url}/auth/get-users`);
   return response.data;
 };
 

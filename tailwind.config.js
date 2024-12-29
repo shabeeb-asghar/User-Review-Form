@@ -4,7 +4,11 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        custom: ['DM Sans', 'sserif'], // Replace with your custom font name
+      }
+    },
   },
   plugins: [],
 }

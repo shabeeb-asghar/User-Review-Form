@@ -2,7 +2,7 @@ import { useState } from "react";
 import SubmitButton from "./SubmitButton";
 import axios from "axios";
 
-const FeedbackDetails = ({ goBack, rating, setShowThankyou, item_id }) => {
+const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
   const [error, setError] = useState(false); // State to handle error
   const [formData, setFormData] = useState({
     firstName: "",
@@ -20,39 +20,50 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, item_id }) => {
   };
 
   const Submit = async () => {
-    const isEmpty = Object.values(formData).some((value) => value.trim() === "");
+    const isEmpty = Object.values(formData).some(
+      (value) => value.trim() === ""
+    );
     if (isEmpty) {
       setError(true);
     } else {
       setError(false);
-      console.log(item_id)
-      const query = `mutation {
-        change_multiple_column_values(
-          item_id: ${item_id},
-          board_id: 1950184477,
-          column_values: "${JSON.stringify({
-            rating_mkkncwny: { rating },
-            text_mkknfy1h: formData.firstName,
-            dup__of_first_name_mkknhyv5: formData.lastName,
-            long_text_mkkn4xch: formData.additionalFeedback,
-          }).replace(/"/g, '\\"')}"
-        ) {
-          id
-        }
-      }`;
+      console.log(name);
+      const query = `
+  mutation {
+    create_item(
+      board_id: 1950184477,
+      item_name: "${name}",
+      group_id: "topics",
+      column_values: "${JSON.stringify({
+        rating_mkkncwny: { rating: rating },
+        text_mkknfy1h: formData.firstName,
+        dup__of_first_name_mkknhyv5: formData.lastName,
+        long_text_mkkn4xch: formData.additionalFeedback,
+      }).replace(/"/g, '\\"')}"
+    ) {
+      id
+    }
+  }
+`;
 
       const body = JSON.stringify({ query });
       const headers = {
         "Content-Type": "application/json",
-        Authorization: "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTY4MzMxMSwiYWFpIjoxMSwidWlkIjo2Njc3ODU4NSwiaWFkIjoiMjAyNC0xMi0xOFQxNjo0MDoxMi4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjU3MzkxOTEsInJnbiI6ImFwc2UyIn0.x3L4XHLXNML2F5ZGacTOltfNkxdzyGtYmHS9lMqBiSA",
+        Authorization:
+          "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTY4MzMxMSwiYWFpIjoxMSwidWlkIjo2Njc3ODU4NSwiaWFkIjoiMjAyNC0xMi0xOFQxNjo0MDoxMi4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjU3MzkxOTEsInJnbiI6ImFwc2UyIn0.x3L4XHLXNML2F5ZGacTOltfNkxdzyGtYmHS9lMqBiSA",
       };
 
       try {
-        let response = await axios.post("https://api.monday.com/v2", body, { headers });
-        console.log(response)
+        let response = await axios.post("https://api.monday.com/v2", body, {
+          headers,
+        });
+        console.log(`res: ${response}`);
         setShowThankyou(true);
       } catch (error) {
-        console.error("Error submitting feedback:", error.response?.data || error.message);
+        console.error(
+          "Error submitting feedback:",
+          error.response?.data || error.message
+        );
       }
     }
   };
@@ -78,12 +89,13 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, item_id }) => {
         Go Back
       </button>
       {error && (
-        <p className="text-red-500 mt-2">Please fill in all fields before submitting.</p>
+        <p className="text-red-500 mt-2">
+          Please fill in all fields before submitting.
+        </p>
       )}
       <form
         onSubmit={(e) => {
           e.preventDefault(); // Prevent default form submission
-          Submit();
         }}
       >
         <div className="flex w-full gap-12">
@@ -142,9 +154,7 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, item_id }) => {
             placeholder="If you have any additional feedback, please type it in here..."
           />
         </div>
-        <SubmitButton
-        handleSubmit={Submit}
-        />
+        <SubmitButton handleSubmit={Submit} />
       </form>
     </div>
   );

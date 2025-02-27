@@ -1,42 +1,44 @@
 import React, { useState } from "react";
 import SubmitButton from "./SubmitButton";
 
-const RatingComponent = ({ rating, setRating, handleSubmit, showError, setShowError}) => {
-  const [hover, setHover] = useState(0); // State to hold the hover rating
+  const RatingSubmit = ({ handleSubmit, rating, setRating, setShowError, showError }) => {
+    const ratingOptions = [1, 2, 3, 4, 5];
 
-  return (
-    <div className="flex mt-[7%] flex-col pl-8 pt-12 pb-52 bg-white shadow-2xl border w-[37%] h-100">
-      <p className="text-[#170F49] font-bold text-lg">Service rating</p>
-
-      {/* Star Rating */}
-      <div className="flex items-center space-x-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <svg
-            key={star}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill={star <= (hover || rating) ? "#FFD700" : "#E4E4E4"} // Yellow on hover or selected, gray otherwise
-            className="w-8 h-8 cursor-pointer transition duration-300"
-            onMouseEnter={() => {setHover(star)
-                setShowError(false)
-            }} // Highlight stars on hover
-            onMouseLeave={() => setHover(0)} // Remove highlight on mouse leave
-            onClick={() => setRating(star)} // Set the rating on click
-          >
-            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-          </svg>
-        ))}
+    return (
+      <div className="flex flex-col p-6 sm:p-8 bg-white shadow-lg rounded-xl border border-gray-100 w-full">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Rate your experience</h2>
+        
+        <div className="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+          {ratingOptions.map((value) => (
+            <button
+              key={value}
+              onClick={() => {
+                setRating(value);
+                setShowError(false);
+              }}
+              className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full 
+                ${rating === value ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"} 
+                transition-all duration-200 font-semibold text-base sm:text-lg`}
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+        
+        {showError && (
+          <p className="text-red-500 text-xs sm:text-sm text-center mb-4">
+            Please select a rating before submitting.
+          </p>
+        )}
+        
+        <button
+          onClick={handleSubmit}
+          className="px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-medium rounded-full hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Submit Feedback
+        </button>
       </div>
-
-      {/* Error Message */}
-    { showError && (
-      <p className="text-red-500 mt-4 text-sm">Please select a rating before submitting.</p>
-    )
-    }
-      {/* Submit Button */}
-      <SubmitButton handleSubmit={handleSubmit} />
-    </div>
-  );
-};
-
-export default RatingComponent;
+    );
+  };
+  
+  export default RatingSubmit;

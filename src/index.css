@@ -1,12 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body {
-    background-color: #F7F7FB;
-    font-family: 'DM Sans', serif;
-  }
-  .border
-  {
-    border-radius: 30px;
-  }

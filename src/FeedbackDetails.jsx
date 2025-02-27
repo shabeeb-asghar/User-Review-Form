@@ -1,14 +1,13 @@
-import { useState } from "react";
-import SubmitButton from "./SubmitButton";
+import React, { useState } from "react";
 import axios from "axios";
 
 const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
-  const [error, setError] = useState(false); // State to handle error
+  const [error, setError] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     additionalFeedback: "",
-  }); // State to handle form inputs
+  });
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -16,7 +15,7 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
       ...prev,
       [id]: value,
     }));
-    setError(false); // Clear the error when any input field is clicked or updated
+    setError(false);
   };
 
   const Submit = async () => {
@@ -27,24 +26,24 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
       setError(true);
     } else {
       setError(false);
-      console.log(name);
+      
       const query = `
-  mutation {
-    create_item(
-      board_id: 1950184477,
-      item_name: "${name}",
-      group_id: "topics",
-      column_values: "${JSON.stringify({
-        rating_mkkncwny: { rating: rating },
-        text_mkknfy1h: formData.firstName,
-        dup__of_first_name_mkknhyv5: formData.lastName,
-        long_text_mkkn4xch: formData.additionalFeedback,
-      }).replace(/"/g, '\\"')}"
-    ) {
-      id
-    }
-  }
-`;
+        mutation {
+          create_item(
+            board_id: 1950184477,
+            item_name: "${name}",
+            group_id: "topics",
+            column_values: "${JSON.stringify({
+              rating_mkkncwny: { rating: rating },
+              text_mkknfy1h: formData.firstName,
+              dup__of_first_name_mkknhyv5: formData.lastName,
+              long_text_mkkn4xch: formData.additionalFeedback,
+            }).replace(/"/g, '\\"')}"
+          ) {
+            id
+          }
+        }
+      `;
 
       const body = JSON.stringify({ query });
       const headers = {
@@ -54,10 +53,9 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
       };
 
       try {
-        let response = await axios.post("https://api.monday.com/v2", body, {
+        await axios.post("https://api.monday.com/v2", body, {
           headers,
         });
-        console.log(`res: ${response}`);
         setShowThankyou(true);
       } catch (error) {
         console.error(
@@ -69,16 +67,16 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
   };
 
   return (
-    <div className="flex mt-[5%] flex-col py-12 pl-8 pb-46 bg-white shadow-2xl border w-[37%] h-100">
+    <div className="flex flex-col p-6 sm:p-8 bg-white shadow-lg rounded-xl border border-gray-100 w-full">
       <button
         onClick={goBack}
-        className="flex items-center text-[#484558] hover:text-black transition duration-300 font-medium"
+        className="flex items-center text-gray-600 hover:text-gray-900 transition duration-200 font-medium mb-4 sm:mb-6 text-sm sm:text-base"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="currentColor"
-          className="w-5 h-5 mr-2"
+          className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2"
         >
           <path
             fillRule="evenodd"
@@ -86,23 +84,23 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
             clipRule="evenodd"
           />
         </svg>
-        Go Back
+        Back to Rating
       </button>
+      
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Tell us more</h2>
+      
       {error && (
-        <p className="text-red-500 mt-2">
+        <div className="bg-red-50 border border-red-200 text-red-600 px-3 py-2 sm:px-4 sm:py-3 rounded-lg mb-4 sm:mb-6 text-xs sm:text-sm">
           Please fill in all fields before submitting.
-        </p>
+        </div>
       )}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault(); // Prevent default form submission
-        }}
-      >
-        <div className="flex w-full gap-12">
+      
+      <form onSubmit={(e) => e.preventDefault()}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-4 sm:mb-5">
           <div className="flex flex-col">
             <label
               htmlFor="firstName"
-              className="text-sm font-bold text-[#484558] mb-2 mt-6"
+              className="text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2"
             >
               First Name
             </label>
@@ -111,16 +109,16 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
               id="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              className="ml-2 px-4 py-3 border-2 border-gray-300 rounded-full text-blue-700 placeholder-gray-400 
-               focus:outline-none focus:border-blue-500 
-               hover:border-blue-500"
-              placeholder="First Name"
+              className="px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
+                 hover:border-gray-400 transition-all duration-200 text-sm sm:text-base"
+              placeholder="Your first name"
             />
           </div>
           <div className="flex flex-col">
             <label
               htmlFor="lastName"
-              className="text-sm font-bold text-[#484558] mb-2 mt-6"
+              className="text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2"
             >
               Last Name
             </label>
@@ -129,32 +127,40 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
               id="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              className="ml-2 px-4 py-3 border-2 border-gray-300 rounded-full text-blue-700 placeholder-gray-400 
-               focus:outline-none focus:border-blue-500 
-               hover:border-blue-500"
-              placeholder="Last Name"
+              className="px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
+                 hover:border-gray-400 transition-all duration-200 text-sm sm:text-base"
+              placeholder="Your last name"
             />
           </div>
         </div>
-        <div className="flex flex-col">
+        
+        <div className="flex flex-col mb-4 sm:mb-6">
           <label
             htmlFor="additionalFeedback"
-            className="text-sm font-bold text-[#484558] mb-2 mt-6"
+            className="text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2"
           >
             Additional Feedback
           </label>
           <textarea
-            rows="5"
+            rows="4"
             id="additionalFeedback"
             value={formData.additionalFeedback}
             onChange={handleChange}
-            className="ml-2 w-[87%] px-4 py-3 border-2 border-gray-300 rounded-lg text-blue-700 placeholder-gray-400 
-               focus:outline-none focus:border-blue-500 
-               hover:border-blue-500 resize-none"
-            placeholder="If you have any additional feedback, please type it in here..."
+            className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 
+               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
+               hover:border-gray-400 transition-all duration-200 resize-none text-sm sm:text-base"
+            placeholder="If you have any additional feedback, please share it here..."
           />
         </div>
-        <SubmitButton handleSubmit={Submit} />
+        
+        <button
+          type="button"
+          onClick={Submit}
+          className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-sm sm:text-base"
+        >
+          Submit Feedback
+        </button>
       </form>
     </div>
   );

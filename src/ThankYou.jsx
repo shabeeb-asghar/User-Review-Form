@@ -1,21 +1,39 @@
-import ThankYouImage from "./assets/Thankyou.png"; // Adjust the path based on your project structure
-const ThankYou = () =>{
-    return(
-        <div className="flex mt-[7%] flex-col items-center pt-20 pb-36 bg-white shadow-2xl border w-[37%] h-100 text-center">
+import React from "react";
 
-<img
-          src={ThankYouImage}
-          alt="Thank you"
-          className="mx-auto mb-4 w-32 h-32"
-        />
-        <h1 className="text-xl font-semibold text-gray-800 w-[70%]">
-          Thank you! Your submission has been received!
-        </h1>
-        <p className="text-gray-600 mt-2 w-[80%]">
-        Thank you for taking the time to share your feedback! We greatly value your thoughts and strive to make every experience exceptional. Your input helps us improve and serve you better.
-        </p>
-            </div>
+const ThankYou = () => {
+  return (
+    <div className="flex flex-col items-center justify-center p-6 sm:p-8 bg-white shadow-lg rounded-xl border border-gray-100 w-full text-center">
+      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M5 13l4 4L19 7" 
+          />
+        </svg>
+      </div>
+      
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2 sm:mb-4">Thank You!</h2>
+      
+      <p className="text-gray-600 text-sm sm:text-base mb-6 sm:mb-8">
+        Your feedback has been submitted successfully. We appreciate your time and input!
+      </p>
+      
+      <a 
+        href="/" 
+        className="px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-sm sm:text-base"
+      >
+        Back to Home
+      </a>
+    </div>
+  );
+};
 
-    )
-}
-export default ThankYou
+export default ThankYou;

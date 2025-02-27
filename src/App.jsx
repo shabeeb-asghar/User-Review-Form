@@ -6,21 +6,22 @@ import ThankYou from "./ThankYou";
 import axios from "axios";
 
 const App = () => {
-  const [name, setName] = useState(0);
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const name = queryParams.get("name");
-    console.log(name);
-    setName(name);
-  }, []);
+  const [name, setName] = useState("");
   const [rating, setRating] = useState(0);
   const [showInput, setShowInput] = useState(false);
-  const [showerror, setShowError] = useState(false);
-  const [showThanyou, setShowThankyou] = useState(false);
-  console.log(rating);
+  const [showError, setShowError] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const nameParam = queryParams.get("name");
+    setName(nameParam || "Anonymous");
+  }, []);
+
   const handleBackButton = () => {
     setShowInput(false);
   };
+
   const handleSubmitRating = async () => {
     if (rating === 0) {
       setShowError(true);
@@ -51,39 +52,52 @@ const App = () => {
 
       try {
         await axios.post("https://api.monday.com/v2", body, { headers });
+        window.location.href = "https://g.page/r/CZEdy_Gwvth1EAI/review";
       } catch (error) {
         console.error(
           "Error submitting feedback:",
           error.response?.data || error.message
         );
       }
-      window.location.href = "https://g.page/r/CZEdy_Gwvth1EAI/review";
     }
   };
+
   return (
-    <>
-      <div className="flex">
-        <FormText />
-        {!showInput && (
-          <RatingSubmit
-            handleSubmit={handleSubmitRating}
-            rating={rating}
-            setRating={setRating}
-            setShowError={setShowError}
-            showError={showerror}
-          />
-        )}
-        {showInput && !showThanyou && (
-          <FeedbackDetails
-            goBack={handleBackButton}
-            name={name}
-            rating={rating}
-            setShowThankyou={setShowThankyou}
-          />
-        )}
-        {showThanyou && <ThankYou />}
+    <div className="min-h-screen bg-gray-50 py-6 sm:py-12 px-4">
+      <div className="container mx-auto">
+        <div className="flex flex-col max-w-5xl mx-auto gap-6">
+          {/* On mobile: Stack vertically, On tablet+ screens: Side-by-side layout */}
+          <div className="lg:flex lg:gap-8 lg:items-start">
+            <div className="lg:w-1/2 mb-6 lg:mb-0">
+              <FormText />
+            </div>
+            
+            <div className="lg:w-1/2">
+              {!showInput && !showThankYou && (
+                <RatingSubmit
+                  handleSubmit={handleSubmitRating}
+                  rating={rating}
+                  setRating={setRating}
+                  setShowError={setShowError}
+                  showError={showError}
+                />
+              )}
+              
+              {showInput && !showThankYou && (
+                <FeedbackDetails
+                  goBack={handleBackButton}
+                  name={name}
+                  rating={rating}
+                  setShowThankyou={setShowThankYou}
+                />
+              )}
+              
+              {showThankYou && <ThankYou />}
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

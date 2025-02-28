@@ -1,44 +1,47 @@
 import React, { useState } from "react";
+import { Star } from "lucide-react"; // Importing star icon
 import SubmitButton from "./SubmitButton";
 
-  const RatingSubmit = ({ handleSubmit, rating, setRating, setShowError, showError }) => {
-    const ratingOptions = [1, 2, 3, 4, 5];
+const RatingSubmit = ({ handleSubmit, rating, setRating, setShowError, showError }) => {
+  const maxStars = 5; // Maximum number of stars
 
-    return (
-      <div className="flex flex-col p-6 sm:p-8 bg-white shadow-lg rounded-xl border border-gray-100 w-full">
-        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Rate your experience</h2>
-        
-        <div className="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-          {ratingOptions.map((value) => (
+  return (
+    <div className="flex flex-col p-6 sm:p-8 bg-white shadow-lg rounded-xl border border-gray-100 w-full">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4 sm:mb-6">
+        Service rating
+      </h2>
+      
+      <div className="flex gap-6 mb-4 sm:mb-6">
+        {Array.from({ length: maxStars }, (_, index) => {
+          const starValue = index + 1;
+          return (
             <button
-              key={value}
+              key={starValue}
               onClick={() => {
-                setRating(value);
+                setRating(starValue);
                 setShowError(false);
               }}
-              className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full 
-                ${rating === value ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"} 
-                transition-all duration-200 font-semibold text-base sm:text-lg`}
+              className="focus:outline-none"
             >
-              {value}
+              <Star 
+                size={32} // Adjust size as needed
+                className={starValue <= rating ? "text-yellow-400" : "text-gray-300"}
+                fill={starValue <= rating ? "currentColor" : "none"}
+              />
             </button>
-          ))}
-        </div>
-        
-        {showError && (
-          <p className="text-red-500 text-xs sm:text-sm text-center mb-4">
-            Please select a rating before submitting.
-          </p>
-        )}
-        
-        <button
-          onClick={handleSubmit}
-          className="px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-medium rounded-full hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Submit Feedback
-        </button>
+          );
+        })}
       </div>
-    );
-  };
-  
-  export default RatingSubmit;
+      
+      {showError && (
+        <p className="text-red-500 text-xs sm:text-sm text-center mb-4">
+          Please select a rating before submitting.
+        </p>
+      )}
+
+      <SubmitButton handleSubmit={handleSubmit} />
+    </div>
+  );
+};
+
+export default RatingSubmit;

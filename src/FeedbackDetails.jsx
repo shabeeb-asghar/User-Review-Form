@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import SubmitButton from "./SubmitButton";
 
 const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
   const [error, setError] = useState(false);
@@ -67,7 +68,7 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
   };
 
   return (
-    <div className="flex flex-col p-6 sm:p-8 bg-white shadow-lg rounded-xl border border-gray-100 w-full">
+    <div className="flex flex-col p-6 sm:p-8 bg-white shadow-lg rounded-2xl border border-gray-100 w-full">
       <button
         onClick={goBack}
         className="flex items-center text-gray-600 hover:text-gray-900 transition duration-200 font-medium mb-4 sm:mb-6 text-sm sm:text-base"
@@ -109,7 +110,7 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
               id="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              className="px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 
+              className="px-3 rounded-full py-2 sm:px-4 sm:py-3 border border-gray-300 text-gray-800 placeholder-gray-400 
                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
                  hover:border-gray-400 transition-all duration-200 text-sm sm:text-base"
               placeholder="Your first name"
@@ -127,7 +128,7 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
               id="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              className="px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 
+              className="px-3 rounded-full py-2 sm:px-4 sm:py-3 border border-gray-300 text-gray-800 placeholder-gray-400 
                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
                  hover:border-gray-400 transition-all duration-200 text-sm sm:text-base"
               placeholder="Your last name"
@@ -154,13 +155,8 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
           />
         </div>
         
-        <button
-          type="button"
-          onClick={Submit}
-          className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-sm sm:text-base"
-        >
-          Submit Feedback
-        </button>
+
+        <SubmitButton handleSubmit={Submit}/>
       </form>
     </div>
   );

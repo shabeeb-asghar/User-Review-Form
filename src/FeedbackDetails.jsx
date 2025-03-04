@@ -27,7 +27,7 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
       setError(true);
     } else {
       setError(false);
-      
+
       const query = `
         mutation {
           create_item(
@@ -68,7 +68,7 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
   };
 
   return (
-    <div className="flex flex-col p-6 sm:p-8 bg-white shadow-lg rounded-2xl border border-gray-100 w-full">
+    <div className="flex flex-col p-6 sm:p-8 bg-white shadow-lg rounded-2xl border border-gray-100 w-full mt-16">
       <button
         onClick={goBack}
         className="flex items-center text-gray-600 hover:text-gray-900 transition duration-200 font-medium mb-4 sm:mb-6 text-sm sm:text-base"
@@ -87,15 +87,17 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
         </svg>
         Back to Rating
       </button>
-      
-      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Tell us more</h2>
-      
+
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">
+        Tell us more
+      </h2>
+
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-600 px-3 py-2 sm:px-4 sm:py-3 rounded-lg mb-4 sm:mb-6 text-xs sm:text-sm">
           Please fill in all fields before submitting.
         </div>
       )}
-      
+
       <form onSubmit={(e) => e.preventDefault()}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-4 sm:mb-5">
           <div className="flex flex-col">
@@ -135,7 +137,7 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
             />
           </div>
         </div>
-        
+
         <div className="flex flex-col mb-4 sm:mb-6">
           <label
             htmlFor="additionalFeedback"
@@ -154,9 +156,8 @@ const FeedbackDetails = ({ goBack, rating, setShowThankyou, name }) => {
             placeholder="If you have any additional feedback, please share it here..."
           />
         </div>
-        
 
-        <SubmitButton handleSubmit={Submit}/>
+        <SubmitButton handleSubmit={Submit} />
       </form>
     </div>
   );

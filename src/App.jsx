@@ -41,7 +41,7 @@ const App = () => {
           id
         }
       }
-    `;
+      `;
 
       const body = JSON.stringify({ query });
       const headers = {
@@ -65,14 +65,14 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-6 sm:py-12 px-4">
       <div className="container mx-auto">
-        <div className="flex flex-col max-w-5xl mx-auto gap-6">
+        <div className="flex flex-col max-w-7xl mx-auto gap-6">
           {/* On mobile: Stack vertically, On tablet+ screens: Side-by-side layout */}
           <div className="lg:flex lg:gap-8 lg:items-start">
-            <div className="lg:w-1/2 mb-6 lg:mb-0">
+            <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
               <FormText />
             </div>
-            
-            <div className="lg:w-1/2">
+
+            <div className="lg:w-1/2 w-full">
               {!showInput && !showThankYou && (
                 <RatingSubmit
                   handleSubmit={handleSubmitRating}
@@ -82,7 +82,7 @@ const App = () => {
                   showError={showError}
                 />
               )}
-              
+
               {showInput && !showThankYou && (
                 <FeedbackDetails
                   goBack={handleBackButton}
@@ -91,7 +91,7 @@ const App = () => {
                   setShowThankyou={setShowThankYou}
                 />
               )}
-              
+
               {showThankYou && <ThankYou />}
             </div>
           </div>

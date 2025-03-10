@@ -7,6 +7,7 @@ import axios from "axios";
 
 const App = () => {
   const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
   const [rating, setRating] = useState(0);
   const [showInput, setShowInput] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -15,28 +16,26 @@ const App = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const nameParam = queryParams.get("name");
+    const locationParam = queryParams.get("location");
     setName(nameParam || "Anonymous");
+    setLocation(locationParam || "");
   }, []);
 
   const handleBackButton = () => {
     setShowInput(false);
   };
 
-  // Helper: Convert degrees to radians.
-  const deg2rad = (deg) => deg * (Math.PI / 180);
+  const getReviewLinkByLocation = (location) => {
+    const reviewLinks = {
+      "Brisbane": "https://g.page/r/CW5iu21vrbo-EAE/review",
+      "Geelong": "https://g.page/r/CVfJ9k_tJyirEBM/review",
+      "Melbourne": "https://g.page/r/CZEdy_Gwvth1EBM/review",
+      "Sydney": "https://g.page/r/CaRE2y-IkZGxEBM/review",
+      "Gold Coast": "https://g.page/r/CTd5_h0YNf8fEAE/review",
+      "Aus": "https://g.page/r/CaRE2y-IkZGxEBM/review",
+    };
 
-  // Helper: Haversine formula to calculate distance (in km) between two lat/lng points.
-  const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the Earth in km
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(deg2rad(lat1)) *
-        Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+    return reviewLinks[location] || reviewLinks["Melbourne"]; // Default to Melbourne if location not found
   };
 
   const handleSubmitRating = async () => {
@@ -45,7 +44,7 @@ const App = () => {
     } else if (rating < 4) {
       setShowInput(true);
     } else {
-      // For 4 or 5 stars: submit basic feedback and then determine nearest location
+      // For 4 or 5 stars: submit basic feedback and redirect to review page
       const query = `
         mutation {
           create_item(
@@ -69,85 +68,15 @@ const App = () => {
 
       try {
         await axios.post("https://api.monday.com/v2", body, { headers });
-
-        // Use Google Geolocation API to get user's current location
-        const geoApiKey = "YOUR_GOOGLE_GEOLOCATION_API_KEY";
-        const geoRes = await fetch(
-          `https://www.googleapis.com/geolocation/v1/geolocate?key=${geoApiKey}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({}), // empty body
-          }
-        );
-        const geoData = await geoRes.json();
-        if (!geoData.location) {
-          alert("Unable to determine your location.");
-          return;
-        }
-        const { lat, lng } = geoData.location;
-
-        // Define the known locations with provided coordinates
-        const locations = [
-          {
-            name: "Easy Concrete Supply Melbourne",
-            lat: -37.7965214,
-            lng: 145.0262562,
-          },
-          {
-            name: "Easy Concrete Supply Sydney",
-            lat: -33.8677813,
-            lng: 151.2008871,
-          },
-          {
-            name: "Easy Concrete Supply Brisbane",
-            lat: -27.4695391,
-            lng: 153.0183226,
-          },
-          {
-            name: "Easy Concrete Supply Gold Coast",
-            lat: -28.0020782,
-            lng: 153.4241828,
-          },
-          {
-            name: "Easy Concrete Supply Geelong",
-            lat: -38.1469362,
-            lng: 144.3557738,
-          },
-        ];
-
-        // Determine the nearest location using the Haversine distance.
-        let nearestLocation = locations[0];
-        let minDistance = getDistanceFromLatLonInKm(
-          lat,
-          lng,
-          locations[0].lat,
-          locations[0].lng
-        );
-
-        for (let i = 1; i < locations.length; i++) {
-          const distance = getDistanceFromLatLonInKm(
-            lat,
-            lng,
-            locations[i].lat,
-            locations[i].lng
-          );
-          if (distance < minDistance) {
-            minDistance = distance;
-            nearestLocation = locations[i];
-          }
-        }
-
-        // Construct the Google Maps URL for the nearest location.
-        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-          nearestLocation.name
-        )}&center=${nearestLocation.lat},${nearestLocation.lng}&zoom=15`;
-        window.location.href = mapsUrl;
+        
+        // Get the review link based on the location from URL parameter
+        const reviewLink = getReviewLinkByLocation(location);
+        
+        // Redirect to the appropriate review page
+        window.location.href = reviewLink;
       } catch (error) {
         console.error(
-          "Error submitting feedback or fetching location:",
+          "Error submitting feedback:",
           error.response?.data || error.message
         );
       }
@@ -194,6 +123,3 @@ const App = () => {
 };
 
 export default App;
-
-
-

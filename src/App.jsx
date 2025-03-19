@@ -27,15 +27,15 @@ const App = () => {
 
   const getReviewLinkByLocation = (location) => {
     const reviewLinks = {
-      "Brisbane": "https://g.page/r/CW5iu21vrbo-EAE/review",
-      "Geelong": "https://g.page/r/CVfJ9k_tJyirEBM/review",
-      "Melbourne": "https://g.page/r/CZEdy_Gwvth1EBM/review",
-      "Sydney": "https://g.page/r/CaRE2y-IkZGxEBM/review",
-      "Gold Coast": "https://g.page/r/CTd5_h0YNf8fEAE/review",
-      "Aus": "https://g.page/r/CaRE2y-IkZGxEBM/review",
+      brisbane: "https://g.page/r/CW5iu21vrbo-EAE/review",
+      geelong: "https://g.page/r/CVfJ9k_tJyirEBM/review",
+      melbourne: "https://g.page/r/CZEdy_Gwvth1EBM/review",
+      sydney: "https://g.page/r/CaRE2y-IkZGxEBM/review",
+      goldcoast: "https://g.page/r/CTd5_h0YNf8fEAE/review",
+      aus: "https://g.page/r/CaRE2y-IkZGxEBM/review",
     };
 
-    return reviewLinks[location] || reviewLinks["Melbourne"]; // Default to Melbourne if location not found
+    return reviewLinks[location] || reviewLinks["aus"]; // Default to Melbourne if location not found
   };
 
   const handleSubmitRating = async () => {
@@ -68,10 +68,10 @@ const App = () => {
 
       try {
         await axios.post("https://api.monday.com/v2", body, { headers });
-        
+
         // Get the review link based on the location from URL parameter
-        const reviewLink = getReviewLinkByLocation(location);
-        
+        const reviewLink = getReviewLinkByLocation(location.toLowerCase());
+
         // Redirect to the appropriate review page
         window.location.href = reviewLink;
       } catch (error) {

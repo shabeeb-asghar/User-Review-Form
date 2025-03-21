@@ -33,11 +33,13 @@ const App = () => {
       locationFromPath = "Sydney";
     } else if (path.includes("/gc")) {
       locationFromPath = "Gold Coast";
-    } else if (path.includes("/aus")) {
-      locationFromPath = "Aus";
-    } else {
+    } 
+    // else if (path.includes("/aus")) {
+    //   locationFromPath = "Aus";
+    // } 
+    else {
       // Default to Melbourne if no location in path
-      locationFromPath = "Melbourne";
+      locationFromPath = "Sydney";
     }
     
     setLocation(locationFromPath);
@@ -54,10 +56,10 @@ const App = () => {
       "Melbourne": "https://g.page/r/CZEdy_Gwvth1EBM/review",
       "Sydney": "https://g.page/r/CaRE2y-IkZGxEBM/review",
       "Gold Coast": "https://g.page/r/CTd5_h0YNf8fEAE/review",
-      "Aus": "https://g.page/r/CaRE2y-IkZGxEBM/review",
+      // "Aus": "https://g.page/r/CaRE2y-IkZGxEBM/review",
     };
 
-    return reviewLinks[location] || reviewLinks["Melbourne"]; // Default to Melbourne if location not found
+    return reviewLinks[location] || reviewLinks["Sydney"]; // Default to Melbourne if location not found
   };
 
   const handleSubmitRating = async () => {

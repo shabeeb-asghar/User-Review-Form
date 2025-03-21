@@ -1,109 +1,115 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import FormText from "./FormText";
-import RatingSubmit from "./RatingSubmit";
+import RatingSubmitMelbourne from "./RatingSubmitMelbourne";
+import RatingSubmitGeelong from "./RatingSubmitGeelong";
+import RatingSubmitGoldCoast from "./RatingSubmitGoldCoast";
+import RatingSubmitBrisbane from "./RatingSubmitBrisbane";
+import RatingSubmitSydney from "./RatingSubmitSydney";
 import FeedbackDetails from "./FeedbackDetails";
 import ThankYou from "./ThankYou";
 import axios from "axios";
 
+// Main component wrapper with Router
 const App = () => {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+};
+
+// Content component that uses routing information
+const AppContent = () => {
   const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
   const [rating, setRating] = useState(0);
   const [showInput, setShowInput] = useState(false);
   const [showError, setShowError] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
-    // Get name from query parameters, keep this logic the same
-    const queryParams = new URLSearchParams(window.location.search);
+    // Get name from query parameters
+    const queryParams = new URLSearchParams(location.search);
     const nameParam = queryParams.get("name");
     setName(nameParam || "Anonymous");
-    
-    // Determine location from URL path (case insensitive)
-    const path = window.location.pathname.toLowerCase();
-    let locationFromPath = "";
-    
-    if (path.includes("/bris")) {
-      locationFromPath = "Brisbane";
-    } else if (path.includes("/geel")) {
-      locationFromPath = "Geelong";
-    } else if (path.includes("/melb")) {
-      locationFromPath = "Melbourne";
-    } else if (path.includes("/syd")) {
-      locationFromPath = "Sydney";
-    } else if (path.includes("/gc")) {
-      locationFromPath = "Gold Coast";
-    } 
-    // else if (path.includes("/aus")) {
-    //   locationFromPath = "Aus";
-    // } 
-    else {
-      // Default to Melbourne if no location in path
-      locationFromPath = "Sydney";
-    }
-    
-    setLocation(locationFromPath);
-  }, []);
+  }, [location.search]);
 
   const handleBackButton = () => {
     setShowInput(false);
   };
 
-  const getReviewLinkByLocation = (location) => {
-    const reviewLinks = {
-      "Brisbane": "https://g.page/r/CW5iu21vrbo-EAE/review",
-      "Geelong": "https://g.page/r/CVfJ9k_tJyirEBM/review",
-      "Melbourne": "https://g.page/r/CZEdy_Gwvth1EBM/review",
-      "Sydney": "https://g.page/r/CaRE2y-IkZGxEBM/review",
-      "Gold Coast": "https://g.page/r/CTd5_h0YNf8fEAE/review",
-      // "Aus": "https://g.page/r/CaRE2y-IkZGxEBM/review",
-    };
-
-    return reviewLinks[location] || reviewLinks["Sydney"]; // Default to Melbourne if location not found
-  };
-
   const handleSubmitRating = async () => {
     if (rating === 0) {
       setShowError(true);
-    } else if (rating < 4) {
+      return;
+    } 
+    
+    if (rating < 4) {
       setShowInput(true);
+      return;
+    }
+    
+    // Determine location and review link based on current route
+    let locationName;
+    let reviewLink;
+    
+    // Get path from current location
+    const path = location.pathname;
+    
+    // Set location name and review link based on path
+    if (path.includes("/melb")) {
+      locationName = "Melbourne";
+      reviewLink = "https://g.page/r/CZEdy_Gwvth1EBM/review";
+    } else if (path.includes("/geel")) {
+      locationName = "Geelong";
+      reviewLink = "https://g.page/r/CVfJ9k_tJyirEBM/review";
+    } else if (path.includes("/bris")) {
+      locationName = "Brisbane";
+      reviewLink = "https://g.page/r/CW5iu21vrbo-EAE/review";
+    } else if (path.includes("/gc")) {
+      locationName = "Gold Coast";
+      reviewLink = "https://g.page/r/CTd5_h0YNf8fEAE/review";
     } else {
-      // For 4 or 5 stars: submit basic feedback and redirect to review page
-      const query = `
-        mutation {
-          create_item(
-            board_id: 1950184477,
-            item_name: "${name}",
-            group_id: "topics",
-            column_values: "${JSON.stringify({
-              rating_mkkncwny: { rating: rating },
-            }).replace(/"/g, '\\"')}"
-          ) {
-            id
-          }
+      // Default to Sydney for root path or /syd
+      locationName = "Sydney";
+      reviewLink = "https://g.page/r/CaRE2y-IkZGxEBM/review";
+    }
+    
+    // For 4 or 5 stars: submit basic feedback and redirect to review page
+    const query = `
+      mutation {
+        create_item(
+          board_id: 1950184477,
+          item_name: "${name}",
+          group_id: "topics",
+          column_values: "${JSON.stringify({
+            rating_mkkncwny: { rating: rating },
+            location: { text: locationName }
+          }).replace(/"/g, '\\"')}"
+        ) {
+          id
         }
-      `;
-      const body = JSON.stringify({ query });
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization:
-          "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTY4MzMxMSwiYWFpIjoxMSwidWlkIjo2Njc3ODU4NSwiaWFkIjoiMjAyNC0xMi0xOFQxNjo0MDoxMi4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjU3MzkxOTEsInJnbiI6ImFwc2UyIn0.x3L4XHLXNML2F5ZGacTOltfNkxdzyGtYmHS9lMqBiSA",
-      };
-
-      try {
-        await axios.post("https://api.monday.com/v2", body, { headers });
-        
-        // Get the review link based on the location determined from the URL path
-        const reviewLink = getReviewLinkByLocation(location);
-        
-        // Redirect to the appropriate review page
-        window.location.href = reviewLink;
-      } catch (error) {
-        console.error(
-          "Error submitting feedback:",
-          error.response?.data || error.message
-        );
       }
+    `;
+    
+    const body = JSON.stringify({ query });
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization:
+        "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTY4MzMxMSwiYWFpIjoxMSwidWlkIjo2Njc3ODU4NSwiaWFkIjoiMjAyNC0xMi0xOFQxNjo0MDoxMi4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjU3MzkxOTEsInJnbiI6ImFwc2UyIn0.x3L4XHLXNML2F5ZGacTOltfNkxdzyGtYmHS9lMqBiSA",
+    };
+
+    try {
+      await axios.post("https://api.monday.com/v2", body, { headers });
+      
+      // Redirect to the appropriate review page
+      window.location.href = reviewLink;
+    } catch (error) {
+      console.error(
+        "Error submitting feedback:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -119,13 +125,81 @@ const App = () => {
 
             <div className="lg:w-1/2 w-full">
               {!showInput && !showThankYou && (
-                <RatingSubmit
-                  handleSubmit={handleSubmitRating}
-                  rating={rating}
-                  setRating={setRating}
-                  setShowError={setShowError}
-                  showError={showError}
-                />
+                <Routes>
+                  <Route 
+                    path="/melb" 
+                    element={
+                      <RatingSubmitMelbourne
+                        handleSubmit={handleSubmitRating}
+                        rating={rating}
+                        setRating={setRating}
+                        setShowError={setShowError}
+                        showError={showError}
+                      />
+                    } 
+                  />
+                  <Route 
+                    path="/geel" 
+                    element={
+                      <RatingSubmitGeelong
+                        handleSubmit={handleSubmitRating}
+                        rating={rating}
+                        setRating={setRating}
+                        setShowError={setShowError}
+                        showError={showError}
+                      />
+                    } 
+                  />
+                  <Route 
+                    path="/bris" 
+                    element={
+                      <RatingSubmitBrisbane
+                        handleSubmit={handleSubmitRating}
+                        rating={rating}
+                        setRating={setRating}
+                        setShowError={setShowError}
+                        showError={showError}
+                      />
+                    } 
+                  />
+                  <Route 
+                    path="/gc" 
+                    element={
+                      <RatingSubmitGoldCoast
+                        handleSubmit={handleSubmitRating}
+                        rating={rating}
+                        setRating={setRating}
+                        setShowError={setShowError}
+                        showError={showError}
+                      />
+                    } 
+                  />
+                  <Route 
+                    path="/syd" 
+                    element={
+                      <RatingSubmitSydney
+                        handleSubmit={handleSubmitRating}
+                        rating={rating}
+                        setRating={setRating}
+                        setShowError={setShowError}
+                        showError={showError}
+                      />
+                    } 
+                  />
+                  {/* Default route (homepage) */}
+                  <Route 
+                    path="/" 
+                    element={
+                      <RatingSubmitSydney
+                        handleSubmit={handleSubmitRating}
+                        rating={rating}
+                        setRating={setRating}
+                        setShowError={setShowError}
+                        showError={showError}
+                      />
+                    } 
+                  />
+                </Routes>
               )}
 
               {showInput && !showThankYou && (

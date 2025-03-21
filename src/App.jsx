@@ -14,11 +14,33 @@ const App = () => {
   const [showThankYou, setShowThankYou] = useState(false);
 
   useEffect(() => {
+    // Get name from query parameters, keep this logic the same
     const queryParams = new URLSearchParams(window.location.search);
     const nameParam = queryParams.get("name");
-    const locationParam = queryParams.get("location");
     setName(nameParam || "Anonymous");
-    setLocation(locationParam || "");
+    
+    // Determine location from URL path (case insensitive)
+    const path = window.location.pathname.toLowerCase();
+    let locationFromPath = "";
+    
+    if (path.includes("/bris")) {
+      locationFromPath = "Brisbane";
+    } else if (path.includes("/geel")) {
+      locationFromPath = "Geelong";
+    } else if (path.includes("/melb")) {
+      locationFromPath = "Melbourne";
+    } else if (path.includes("/syd")) {
+      locationFromPath = "Sydney";
+    } else if (path.includes("/gc")) {
+      locationFromPath = "Gold Coast";
+    } else if (path.includes("/aus")) {
+      locationFromPath = "Aus";
+    } else {
+      // Default to Melbourne if no location in path
+      locationFromPath = "Melbourne";
+    }
+    
+    setLocation(locationFromPath);
   }, []);
 
   const handleBackButton = () => {
@@ -69,7 +91,7 @@ const App = () => {
       try {
         await axios.post("https://api.monday.com/v2", body, { headers });
         
-        // Get the review link based on the location from URL parameter
+        // Get the review link based on the location determined from the URL path
         const reviewLink = getReviewLinkByLocation(location);
         
         // Redirect to the appropriate review page

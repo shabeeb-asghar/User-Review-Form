@@ -19,11 +19,11 @@ FROM nginx:alpine
 # Copy build output to Nginx root directory
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy custom Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy Nginx configuration (use /etc/nginx/nginx.conf instead of conf.d/)
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Expose port 80
-EXPOSE 80
+# Expose port 8080 for Cloud Run compatibility
+EXPOSE 8080
 
 # Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]

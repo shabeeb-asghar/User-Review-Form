@@ -70,6 +70,9 @@ const AppContent = () => {
     } else if (path.includes("/gc")) {
       locationName = "Gold Coast";
       reviewLink = "https://g.page/r/CTd5_h0YNf8fEAE/review";
+    } else if (path.includes("/wa")) {
+      locationName = "Perth";
+      reviewLink = "https://g.page/r/CUf7coiPFMDaEAE/review";
     } else {
       // Default to Sydney for root path or /syd
       locationName = "Sydney";

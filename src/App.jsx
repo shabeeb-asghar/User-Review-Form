@@ -189,6 +189,18 @@ const AppContent = () => {
                       />
                     } 
                   />
+                  <Route 
+                    path="/wa" 
+                    element={
+                      <RatingSubmitSydney
+                        handleSubmit={handleSubmitRating}
+                        rating={rating}
+                        setRating={setRating}
+                        setShowError={setShowError}
+                        showError={showError}
+                      />
+                    } 
+                  />
                   {/* Default route (homepage) */}
                   <Route 
                     path="/" 
